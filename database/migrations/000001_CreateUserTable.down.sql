@@ -1,0 +1,2 @@
+DROP SCHEMA IF EXISTS finance;
+DROP TABLE IF EXISTS finance.user;
