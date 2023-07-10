@@ -30,5 +30,5 @@ type UpdateUserFields struct {
 	Username  string `json:"username"`
 	Email     string `json:"email"`
 	Password  string `json:"password"`
-	UpdatedAt string `json:"updated_at" binding:"required"`
+	UpdatedAt string `json:"updated_at"`
 }

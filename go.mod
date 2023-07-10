@@ -1,6 +1,11 @@
-module finance_backend
+module user_auth
 
 go 1.20
+
+require (
+	gorm.io/driver/postgres v1.5.2
+	gorm.io/gorm v1.25.2
+)
 
 require (
 	github.com/bytedance/sonic v1.9.2 // indirect
@@ -34,6 +39,4 @@ require (
 	golang.org/x/text v0.11.0 // indirect
 	google.golang.org/protobuf v1.31.0 // indirect
 	gopkg.in/yaml.v3 v3.0.1 // indirect
-	gorm.io/driver/postgres v1.5.2 // indirect
-	gorm.io/gorm v1.25.2 // indirect
 )

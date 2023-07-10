@@ -1,11 +1,15 @@
 package routes
 
 import (
-	controller "finance_backend/controllers/Auth"
+	controller "user_auth/controllers/Auth"
 
 	"github.com/gin-gonic/gin"
 )
 
-func AuthRoutes(api *gin.RouterGroup) {
-	api.POST("/login", controller.Login)
+type AuthRoute struct {
+	authController controller.AuthController
+}
+
+func (ar *AuthRoute) AuthRoutes(api *gin.RouterGroup) {
+	api.POST("/login", ar.authController.Login)
 }

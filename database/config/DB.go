@@ -12,10 +12,10 @@ var (
 )
 
 func ConnectToDataBase() {
-	dsn := "host=localhost user=postgres password=root dbname=finance port=5432 sslmode=disable"
+	dsn := "host=localhost user=postgres password=root dbname=user_auth port=5432 sslmode=disable"
 	DB, err = gorm.Open(postgres.Open(dsn), &gorm.Config{
 		NamingStrategy: schema.NamingStrategy{
-			TablePrefix:   "finance.",
+			TablePrefix:   "user_auth.",
 			SingularTable: true,
 		},
 	})
