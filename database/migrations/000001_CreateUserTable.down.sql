@@ -1,2 +1,2 @@
-DROP SCHEMA IF EXISTS finance;
-DROP TABLE IF EXISTS finance.user;
+DROP SCHEMA IF EXISTS user_auth;
+DROP TABLE IF EXISTS user_auth.user;

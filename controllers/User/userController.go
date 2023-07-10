@@ -1,31 +1,27 @@
 package controllers
 
 import (
-	services "finance_backend/service/User"
+	service "user_auth/service/User"
 
 	"github.com/gin-gonic/gin"
 )
 
 type UserController struct {
-	userService services.UserService
-}
-
-func NewUserController(userService services.UserService) UserController {
-	return UserController{userService}
+	userService service.UserServiceImpl
 }
 
 func (uc *UserController) GetSpecificUser(c *gin.Context) {
-	uc.GetSpecificUser(c)
+	uc.userService.GetSpecificUser(c)
 }
 
 func (uc *UserController) RegisterUser(c *gin.Context) {
-	uc.RegisterUser(c)
+	uc.userService.RegisterUser(c)
 }
 
 func (uc *UserController) UpdateUser(c *gin.Context) {
-	uc.UpdateUser(c)
+	uc.userService.UpdateUser(c)
 }
 
 func (uc *UserController) DeleteUser(c *gin.Context) {
-	uc.DeleteUser(c)
+	uc.userService.DeleteUser(c)
 }

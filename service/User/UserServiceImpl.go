@@ -1,10 +1,10 @@
 package services
 
 import (
-	database "finance_backend/database/config"
-	models "finance_backend/models/User"
 	"net/http"
 	"time"
+	database "user_auth/database/config"
+	models "user_auth/models/User"
 
 	"github.com/gin-gonic/gin"
 	"golang.org/x/crypto/bcrypt"
@@ -12,14 +12,16 @@ import (
 )
 
 type UserServiceImpl struct {
-	c *gin.Context
+	c       *gin.Context
+	newUser models.CreateUserFields
+	user    models.User
 }
 
-// func NewUserServiceImpl() UserService {
-// 	return &UserServiceImpl{}
-// }
+func NewUserServiceImpl(c *gin.Context, newUser models.CreateUserFields, user models.User) UserService {
+	return &UserServiceImpl{c, newUser, user}
+}
 
-func (us *UserServiceImpl) GetSpecificUser(c *gin.Context) {
+func (service *UserServiceImpl) GetSpecificUser(c *gin.Context) {
 	id := c.Param("id")
 	user, err := checkIfExistId(id)
 	if err != nil {
@@ -30,22 +32,20 @@ func (us *UserServiceImpl) GetSpecificUser(c *gin.Context) {
 	c.JSON(http.StatusOK, gin.H{"data": user})
 }
 
-func (us *UserServiceImpl) RegisterUser(c *gin.Context) {
-	var newUser models.CreateUserFields
-
-	if err := c.ShouldBindJSON(&newUser); err != nil {
+func (service *UserServiceImpl) RegisterUser(c *gin.Context) {
+	if err := c.ShouldBindJSON(&service.newUser); err != nil {
 		c.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
 		c.Abort()
 		return
 	}
 
-	if err := newUser.HashPassword(newUser.Password); err != nil {
+	if err := service.hashPassword(service.newUser.Password); err != nil {
 		c.JSON(http.StatusInternalServerError, gin.H{"error": err.Error()})
 		c.Abort()
 		return
 	}
 
-	user := userExist(newUser)
+	user := userExist(service.newUser)
 	if user == nil {
 		c.JSON(http.StatusInternalServerError, gin.H{"error": "Email Already exist"})
 		c.Abort()
@@ -62,7 +62,7 @@ func (us *UserServiceImpl) RegisterUser(c *gin.Context) {
 	c.JSON(http.StatusCreated, gin.H{"data": user})
 }
 
-func (us *UserServiceImpl) UpdateUser(c *gin.Context) {
+func (service *UserServiceImpl) UpdateUser(c *gin.Context) {
 	id := c.Param("id")
 	user, err := checkIfExistId(id)
 	if err != nil {
@@ -70,17 +70,16 @@ func (us *UserServiceImpl) UpdateUser(c *gin.Context) {
 		return
 	}
 
-	var userInput models.UpdateUserFields
-	if err := c.ShouldBindJSON(&userInput); err != nil {
+	if err := c.ShouldBindJSON(&user); err != nil {
 		c.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
 		return
 	}
 
-	database.DB.Model(&user).Updates(userInput)
+	database.DB.Model(&user).Updates(user)
 	c.JSON(http.StatusOK, gin.H{"data": user})
 }
 
-func (us *UserServiceImpl) DeleteUser(c *gin.Context) {
+func (service *UserServiceImpl) DeleteUser(c *gin.Context) {
 	id := c.Param("id")
 	user, err := checkIfExistId(id)
 	if err != nil {
@@ -99,8 +98,8 @@ func checkIfExistId(id string) (models.User, error) {
 }
 
 func userExist(newUser models.CreateUserFields) *models.User {
-	var existingUser models.User
-	if err := database.DB.Where("email = ?", newUser.Email).First(&existingUser).Error; err != nil {
+	var user models.User
+	if err := database.DB.Where("email = ?", newUser.Email).First(&user).Error; err != nil {
 		if err == gorm.ErrRecordNotFound {
 			user := models.User{
 				Name:      newUser.Name,
@@ -118,17 +117,17 @@ func userExist(newUser models.CreateUserFields) *models.User {
 	return nil
 }
 
-func (newUser *CreateUserFields) hashPassword(password string) error {
+func (us *UserServiceImpl) hashPassword(password string) error {
 	bytes, err := bcrypt.GenerateFromPassword([]byte(password), 10)
 	if err != nil {
 		return err
 	}
-	newUser.Password = string(bytes)
+	us.newUser.Password = string(bytes)
 	return nil
 }
 
-func (user *User) checkPassword(providedPassword string) error {
-	err := bcrypt.CompareHashAndPassword([]byte(user.Password), []byte(providedPassword))
+func (us *UserServiceImpl) checkPassword(providedPassword string) error {
+	err := bcrypt.CompareHashAndPassword([]byte(us.user.Password), []byte(providedPassword))
 	if err != nil {
 		return err
 	}

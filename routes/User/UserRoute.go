@@ -1,7 +1,7 @@
 package routes
 
 import (
-	userController "finance_backend/controllers/User"
+	userController "user_auth/controllers/User"
 
 	"github.com/gin-gonic/gin"
 )

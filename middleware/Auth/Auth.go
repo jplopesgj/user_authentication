@@ -1,7 +1,7 @@
 package middleware
 
 import (
-	service "finance_backend/service/Auth"
+	service "user_auth/service/Auth"
 
 	"github.com/gin-gonic/gin"
 )

@@ -1,6 +1,6 @@
-CREATE SCHEMA IF NOT EXISTS finance;
+CREATE SCHEMA IF NOT EXISTS user_auth;
 
-CREATE TABLE IF NOT EXISTS finance.user (
+CREATE TABLE IF NOT EXISTS user_auth.user (
     id          SERIAL PRIMARY KEY,
     name        VARCHAR(32),
     lastname    VARCHAR(32),
